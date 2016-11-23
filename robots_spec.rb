@@ -114,3 +114,19 @@ describe Robot do
   end
 
 end
+
+describe TableTop do
+
+  describe '#contains?' do
+    it 'should be true if the passed point is within its bounds else false' do
+      [ Point.new(0,0), Point.new(2,3), Point.new(4,4) ].each do |p|
+        expect(subject.contains? p).to eq true
+      end
+      [ Point.new(-1,-1), Point.new(4,5), Point.new(5,4) ].each do |p|
+        expect(subject.contains? p).to eq false
+      end
+    end
+  end
+
+end
+

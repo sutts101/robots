@@ -97,3 +97,17 @@ class Robot
   end
 
 end
+
+class TableTop
+
+  attr_reader :width, :height
+
+  def initialize(width=5, height=5)
+    @width, @height = width, height
+  end
+
+  def contains?(point)
+    (0...@width).include?(point.x) && (0...@height).include?(point.y)
+  end
+
+end
