@@ -15,29 +15,61 @@ end
 
 class Orientation
 
+  attr_reader :x_delta, :y_delta
+
   def self.north
-    @north ||= Orientation.new 0, 1
+    Orientation.new 0, 1
   end
 
   def self.east
-    @east ||= Orientation.new 1, 0
+    Orientation.new 1, 0
   end
 
   def self.south
-    @south ||= Orientation.new 0, -1
+    Orientation.new 0, -1
   end
 
   def self.west
-    @west ||= Orientation.new -1, 0
+    Orientation.new -1, 0
+  end
+
+  def self.points_of_compass
+    [north, east, south, west]
   end
 
   def initialize(x_delta, y_delta)
     @x_delta, @y_delta = x_delta, y_delta
   end
 
+  def ==(other)
+    x_delta == other.x_delta and y_delta == other.y_delta
+  end
+
+  def to_a
+    [@x_delta, @y_delta]
+  end
+
   def move(point)
     Point.new point.x + @x_delta, point.y + @y_delta
   end
 
+  def right
+    rotate 1
+  end
+
+  def left
+    rotate -1
+  end
+
+  private
+
+  def rotate(increment)
+    compass = self.class.points_of_compass
+    index = compass.index { |o| o.x_delta == @x_delta && o.y_delta == @y_delta }
+    raise 'Sorry, Orientation.right / Orientation.left only works for predefined orientations' unless index
+    compass[ (index + increment) % compass.count ]
+  end
+
 end
+
 
