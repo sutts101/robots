@@ -19,30 +19,30 @@ end
 
 class Orientation
 
-  attr_reader :x_delta, :y_delta, :name
+  attr_reader :x_delta, :y_delta
 
   def self.north
-    Orientation.new 0, 1, :north
+    Orientation.new 0, 1
   end
 
   def self.east
-    Orientation.new 1, 0, :east
+    Orientation.new 1, 0
   end
 
   def self.south
-    Orientation.new 0, -1, :south
+    Orientation.new 0, -1
   end
 
   def self.west
-    Orientation.new -1, 0, :west
+    Orientation.new -1, 0
   end
 
   def self.points_of_compass
     [north, east, south, west]
   end
 
-  def initialize(x_delta, y_delta, name=nil)
-    @x_delta, @y_delta, @name = x_delta, y_delta, name
+  def initialize(x_delta, y_delta)
+    @x_delta, @y_delta = x_delta, y_delta
   end
 
   def ==(other)
@@ -63,6 +63,13 @@ class Orientation
 
   def left
     rotate -1
+  end
+
+  def name
+    [:north, :south, :east, :west].each do |predefined|
+      return predefined if self == self.class.send(predefined)
+    end
+    nil
   end
 
   private

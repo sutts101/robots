@@ -86,11 +86,19 @@ describe Orientation do
   end
 
   describe '#name' do
-    it 'should correspond to compass direction' do
-      expect(Orientation.north.name).to eq :north
-      expect(Orientation.east.name).to eq :east
-      expect(Orientation.south.name).to eq :south
-      expect(Orientation.west.name).to eq :west
+    context 'for points of the compass' do
+      it 'should correspond to compass direction' do
+        expect(Orientation.north.name).to eq :north
+        expect(Orientation.east.name).to eq :east
+        expect(Orientation.south.name).to eq :south
+        expect(Orientation.west.name).to eq :west
+        expect(Orientation.new(1,0).name).to eq :east
+      end
+    end
+    context 'for all other orientations' do
+      it 'should be nil' do
+        expect(Orientation.new(1,1).name).to be_nil
+      end
     end
   end
 
