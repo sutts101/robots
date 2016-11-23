@@ -188,11 +188,9 @@ describe TableTop do
     let(:bad_location)  {Point.new -1,-1}
     let(:robot_1)       {double 'Robot'}
     let(:robot_2)       {double 'Robot'}
-    before do
-      expect(robot_1).to receive(:some_op).and_return robot_2
-    end
     context 'when the resulting tabletop would be VALID' do
       it 'should return the resulting tabletop' do
+        expect(robot_1).to receive(:some_op).and_return robot_2
         expect(robot_2).to receive(:location).and_return good_location
         subject = TableTop.new(5, 5, robot_1).apply :some_op
         expect(subject.robot).to eq robot_2
@@ -200,9 +198,17 @@ describe TableTop do
     end
     context 'when the resulting tabletop would NOT be valid' do
       it 'should return itself' do
+        expect(robot_1).to receive(:some_op).and_return robot_2
         expect(robot_2).to receive(:location).and_return bad_location
         subject = TableTop.new(5, 5, robot_1).apply :some_op
         expect(subject.robot).to eq robot_1
+      end
+    end
+    context 'when there is no robot to which the command could be applied' do
+      it 'should return itself' do
+        subject = TableTop.new(5, 5, nil).apply :some_op
+        expect(subject).not_to be_nil
+        expect(subject.robot).to be_nil
       end
     end
   end
@@ -241,6 +247,27 @@ describe Command do
       end
       it 'should explode if the place orientation is not valid' do
         expect{ Command.parse 'MOVE RIGHT PLACE 1,1,SOUTHEAST' }.to raise_error(/Bad place command arguments/)
+      end
+    end
+  end
+
+  describe '#apply' do
+    context 'for PLACE commands' do
+      it 'should invoke place on the passed tabletop' do
+        location = instance_double Point
+        orientation = instance_double Orientation
+        subject = Command.new :place, [location, orientation]
+        tabletop = spy TableTop
+        subject.apply tabletop
+        expect(tabletop).to have_received(:place).with(location, orientation)
+      end
+    end
+    context 'for all other commands' do
+      it 'should invoke apply on the passed tabletop' do
+        subject = Command.new :some_command
+        tabletop = spy TableTop
+        subject.apply tabletop
+        expect(tabletop).to have_received(:apply).with(:some_command)
       end
     end
   end

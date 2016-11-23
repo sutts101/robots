@@ -146,6 +146,14 @@ class Command
     parse_tokenized tokenized_string.split(' '), []
   end
 
+  def apply(tabletop)
+    if name == :place
+      tabletop.place *args
+    else
+      tabletop.apply name
+    end
+  end
+
   private
 
   def self.parse_tokenized(tokens, commands)
