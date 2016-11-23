@@ -100,14 +100,23 @@ end
 
 class TableTop
 
-  attr_reader :width, :height
+  attr_reader :width, :height, :robot
 
-  def initialize(width=5, height=5)
-    @width, @height = width, height
+  def initialize(width=5, height=5, robot=nil)
+    @width, @height, @robot = width, height, robot
   end
 
   def contains?(point)
     (0...@width).include?(point.x) && (0...@height).include?(point.y)
+  end
+
+  def place(point, orientation)
+    result = TableTop.new width, height, Robot.new(point, orientation)
+    result.valid? ? result : self
+  end
+
+  def valid?
+    @robot.nil? || contains?(@robot.location)
   end
 
 end

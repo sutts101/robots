@@ -117,13 +117,54 @@ end
 
 describe TableTop do
 
+  let(:tabletop_5x5) { TableTop.new 5,5 }
+
   describe '#contains?' do
     it 'should be true if the passed point is within its bounds else false' do
       [ Point.new(0,0), Point.new(2,3), Point.new(4,4) ].each do |p|
-        expect(subject.contains? p).to eq true
+        expect(tabletop_5x5.contains? p).to eq true
       end
       [ Point.new(-1,-1), Point.new(4,5), Point.new(5,4) ].each do |p|
-        expect(subject.contains? p).to eq false
+        expect(tabletop_5x5.contains? p).to eq false
+      end
+    end
+  end
+
+  describe '#valid?' do
+    it 'should be TRUE if there is no robot' do
+      subject = TableTop.new 2, 2, nil
+      expect(subject.valid?).to eq true
+    end
+    it 'should be TRUE if there is a robot and the robots location is contained' do
+      robot = Robot.new Point.new(1,1), Orientation.east
+      subject = TableTop.new 2, 2, robot
+      expect(subject.valid?).to eq true
+    end
+    it 'should be FALSE if there is a robot and the robots location is NOT contained' do
+      robot = Robot.new Point.new(3,3), Orientation.east
+      subject = TableTop.new 2, 2, robot
+      expect(subject.valid?).to eq false
+    end
+  end
+
+  describe '#place' do
+    context 'when the resulting tabletop would be VALID' do
+      it 'should return the resulting tabletop (with robot)' do
+        location = Point.new 1,1
+        subject = tabletop_5x5.place location, Orientation.east
+        expect(subject.robot.location).to eq location
+        expect(subject.robot.orientation).to eq Orientation.east
+      end
+    end
+    context 'when the resulting tabletop would NOT be valid?' do
+      it 'should return itself' do
+        location_1 = Point.new 1,1
+        location_2 = Point.new 2,-1
+        subject = tabletop_5x5
+                      .place(location_1, Orientation.east)
+                      .place(location_2, Orientation.west)
+        expect(subject.robot.location).to eq location_1
+        expect(subject.robot.orientation).to eq Orientation.east
       end
     end
   end
