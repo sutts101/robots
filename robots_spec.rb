@@ -195,3 +195,42 @@ describe TableTop do
 
 end
 
+describe Command do
+
+  describe '.parse' do
+    context 'when the command tokens string does NOT include PLACE' do
+      it 'should just treat each token as a single command with no args' do
+        subject = Command.parse 'APPLE BANANA orange KiWi'
+        expect(subject.map(&:name)).to eq [:apple, :banana, :orange, :kiwi]
+      end
+    end
+    context 'when the command tokens string DOES include PLACE' do
+      it 'should skip over the folowing token' do
+        subject = Command.parse 'MOVE RIGHT PLACE 1,1,NORTH LEFT'
+        expect(subject.map(&:name)).to eq [:move, :right, :place, :left]
+      end
+      it 'should set the FIRST argument of the place command to be the corresponding LOCATION' do
+        subject = Command.parse 'MOVE RIGHT PLACE 1,1,NORTH'
+        place_command = subject.last
+        expect(place_command.args.first).to eq Point.new(1,1)
+      end
+      it 'should set the SECOND argument of the place command to be the corresponding ORIENTATION' do
+        subject = Command.parse 'MOVE RIGHT PLACE 1,1,NORTH'
+        place_command = subject.last
+        expect(place_command.args.last).to eq Orientation.north
+      end
+      it 'should explode if there are insufficient place tokens' do
+        expect{ Command.parse 'MOVE RIGHT PLACE 1,1' }.to raise_error(/Bad place command arguments/)
+      end
+      it 'should explode if the place location is not valid' do
+        expect{ Command.parse 'MOVE RIGHT PLACE apple,banana,NORTH' }.to raise_error(/Bad place command arguments/)
+      end
+      it 'should explode if the place orientation is not valid' do
+        expect{ Command.parse 'MOVE RIGHT PLACE 1,1,SOUTHEAST' }.to raise_error(/Bad place command arguments/)
+      end
+    end
+  end
+
+end
+
+

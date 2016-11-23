@@ -129,3 +129,45 @@ class TableTop
   end
 
 end
+
+class Command
+
+  attr_reader :name, :args
+
+  def initialize(name, args=[])
+    @name, @args = name, args
+  end
+
+  def self.parse(tokenized_string)
+    parse_tokenized tokenized_string.split(' '), []
+  end
+
+  private
+
+  def self.parse_tokenized(tokens, commands)
+    unless tokens.empty?
+      name = tokens.first
+      num_tokens_to_consume = 1
+      command = Command.new name.downcase.to_sym
+      if name == 'PLACE'
+        num_tokens_to_consume = 2
+        command = create_place_command tokens[1]
+      end
+      commands << command
+      parse_tokenized tokens[num_tokens_to_consume..-1], commands
+    end
+    commands
+  end
+
+  def self.create_place_command(arg_string)
+    begin
+      tokens = arg_string.split ','
+      location = Point.new tokens[0], tokens[1]
+      orientation = Orientation.send tokens[2].downcase.to_sym
+      Command.new :place, [location, orientation]
+    rescue
+      raise "Bad place command arguments. Want e.g. '1,1,NORTH'. Got '#{arg_string}'"
+    end
+  end
+
+end
