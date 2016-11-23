@@ -7,6 +7,10 @@ class Point
     @y = Integer y
   end
 
+  def ==(other)
+    x == other.x && y == other.y
+  end
+
   def to_a
     [@x,@y]
   end
@@ -72,4 +76,24 @@ class Orientation
 
 end
 
+class Robot
 
+  attr_reader :location, :orientation
+
+  def initialize(location, orientation)
+    @location, @orientation = location, orientation
+  end
+
+  def move
+    Robot.new orientation.move(location), orientation
+  end
+
+  def left
+    Robot.new location, orientation.left
+  end
+
+  def right
+    Robot.new location, orientation.right
+  end
+
+end

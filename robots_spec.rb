@@ -86,3 +86,31 @@ describe Orientation do
   end
 
 end
+
+describe Robot do
+
+  let (:point)        { Point.new 1,1 }
+  let (:orientation1) { instance_double Orientation }
+  let (:orientation2) { instance_double Orientation }
+  subject             { Robot.new point, orientation1 }
+
+  describe '#move' do
+    it 'should return a new robot with same orientation and whatever point the current orientation says' do
+      expect(orientation1).to receive(:move).with(point).and_return Point.new(3,3)
+      moved = subject.move
+      expect(moved.location).to eq Point.new 3,3
+      expect(moved.orientation).to eq subject.orientation
+    end
+  end
+  describe '#left / #right' do
+    it 'should return a new robot with same point and whatever orientation the current orientation says' do
+      [:left, :right].each do |left_or_right|
+        expect(orientation1).to receive(left_or_right).and_return orientation2
+        moved = subject.send left_or_right
+        expect(moved.location).to eq subject.location
+        expect(moved.orientation).to eq orientation2
+      end
+    end
+  end
+
+end
