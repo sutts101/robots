@@ -85,31 +85,45 @@ describe Orientation do
     end
   end
 
+  describe '#name' do
+    it 'should correspond to compass direction' do
+      expect(Orientation.north.name).to eq :north
+      expect(Orientation.east.name).to eq :east
+      expect(Orientation.south.name).to eq :south
+      expect(Orientation.west.name).to eq :west
+    end
+  end
+
 end
 
 describe Robot do
 
   let (:point)        { Point.new 1,1 }
-  let (:orientation1) { instance_double Orientation }
-  let (:orientation2) { instance_double Orientation }
-  subject             { Robot.new point, orientation1 }
+  let (:orientation)  { instance_double Orientation }
+  subject             { Robot.new point, orientation }
 
   describe '#move' do
     it 'should return a new robot with same orientation and whatever point the current orientation says' do
-      expect(orientation1).to receive(:move).with(point).and_return Point.new(3,3)
+      expect(orientation).to receive(:move).with(point).and_return :some_new_point
       moved = subject.move
-      expect(moved.location).to eq Point.new 3,3
+      expect(moved.location).to eq :some_new_point
       expect(moved.orientation).to eq subject.orientation
     end
   end
   describe '#left / #right' do
     it 'should return a new robot with same point and whatever orientation the current orientation says' do
       [:left, :right].each do |left_or_right|
-        expect(orientation1).to receive(left_or_right).and_return orientation2
+        expect(orientation).to receive(left_or_right).and_return :some_new_orientation
         moved = subject.send left_or_right
         expect(moved.location).to eq subject.location
-        expect(moved.orientation).to eq orientation2
+        expect(moved.orientation).to eq :some_new_orientation
       end
+    end
+  end
+  describe '#report' do
+    it 'should return a string indicating location and orientation' do
+      expect(orientation).to receive(:name).and_return :north
+      expect(subject.report).to eq '1,1,NORTH'
     end
   end
 

@@ -19,30 +19,30 @@ end
 
 class Orientation
 
-  attr_reader :x_delta, :y_delta
+  attr_reader :x_delta, :y_delta, :name
 
   def self.north
-    Orientation.new 0, 1
+    Orientation.new 0, 1, :north
   end
 
   def self.east
-    Orientation.new 1, 0
+    Orientation.new 1, 0, :east
   end
 
   def self.south
-    Orientation.new 0, -1
+    Orientation.new 0, -1, :south
   end
 
   def self.west
-    Orientation.new -1, 0
+    Orientation.new -1, 0, :west
   end
 
   def self.points_of_compass
     [north, east, south, west]
   end
 
-  def initialize(x_delta, y_delta)
-    @x_delta, @y_delta = x_delta, y_delta
+  def initialize(x_delta, y_delta, name=nil)
+    @x_delta, @y_delta, @name = x_delta, y_delta, name
   end
 
   def ==(other)
@@ -94,6 +94,10 @@ class Robot
 
   def right
     Robot.new location, orientation.right
+  end
+
+  def report
+    "#{location.x},#{location.y},#{orientation.name.to_s.upcase}"
   end
 
 end
