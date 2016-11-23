@@ -120,10 +120,18 @@ describe Robot do
       end
     end
   end
-  describe '#report' do
+  describe '#to_s' do
     it 'should return a string indicating location and orientation' do
       expect(orientation).to receive(:name).and_return :north
-      expect(subject.report).to eq '1,1,NORTH'
+      expect(subject.to_s).to eq '1,1,NORTH'
+    end
+  end
+  describe '#report' do
+    it 'should output a string indicating location and orientation' do
+      expect(orientation).to receive(:name).and_return :north
+      stdout = spy 'stdout'
+      subject.report stdout
+      expect(stdout).to have_received(:puts).with('1,1,NORTH')
     end
   end
 

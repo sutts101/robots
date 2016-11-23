@@ -96,8 +96,12 @@ class Robot
     Robot.new location, orientation.right
   end
 
-  def report
+  def to_s
     "#{location.x},#{location.y},#{orientation.name.to_s.upcase}"
+  end
+
+  def report(out=STDOUT)
+    out.puts self.to_s
   end
 
 end
