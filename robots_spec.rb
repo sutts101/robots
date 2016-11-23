@@ -282,4 +282,32 @@ describe Command do
 
 end
 
+def run_and_return_robot(command_string)
+  Command.parse_and_apply(command_string, TableTop.new).robot
+end
+
+describe 'putting it all together' do
+
+  it 'should handle declared scenario (a)' do
+    robot = run_and_return_robot 'PLACE 0,0,NORTH MOVE'
+    expect(robot.to_s).to eq '0,1,NORTH'
+  end
+  it 'should handle declared scenario (b)' do
+    robot = run_and_return_robot 'PLACE 0,0,NORTH LEFT'
+    expect(robot.to_s).to eq '0,0,WEST'
+  end
+  it 'should handle declared scenario (c)' do
+    robot = run_and_return_robot 'PLACE 1,2,EAST MOVE MOVE LEFT MOVE'
+    expect(robot.to_s).to eq '3,3,NORTH'
+  end
+  it 'should handle other scenarios like ignoring commands before a valid place' do
+    robot = run_and_return_robot 'MOVE LEFT PLACE 3,-1,EAST MOVE PLACE 1,2,EAST MOVE MOVE LEFT MOVE'
+    expect(robot.to_s).to eq '3,3,NORTH'
+  end
+  it 'should handle other scenarios like ignoring bad moves' do
+    robot = run_and_return_robot 'PLACE 1,1,WEST MOVE MOVE'
+    expect(robot.to_s).to eq '0,1,WEST'
+  end
+
+end
 

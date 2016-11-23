@@ -146,8 +146,15 @@ class Command
     @name, @args = name, args
   end
 
-  def self.parse(tokenized_string)
-    parse_tokenized tokenized_string.split(' '), []
+  def self.parse(commands_string)
+    parse_tokenized commands_string.split(' '), []
+  end
+
+  def self.parse_and_apply(commands_string, tabletop=TableTop.new)
+    parse(commands_string).each do |cmd|
+      tabletop = cmd.apply tabletop
+    end
+    tabletop
   end
 
   def apply(tabletop)
