@@ -110,13 +110,22 @@ class TableTop
     (0...@width).include?(point.x) && (0...@height).include?(point.y)
   end
 
+  def valid?
+    @robot.nil? || contains?(@robot.location)
+  end
+
   def place(point, orientation)
     result = TableTop.new width, height, Robot.new(point, orientation)
     result.valid? ? result : self
   end
 
-  def valid?
-    @robot.nil? || contains?(@robot.location)
+  def apply(op_name)
+    if @robot
+      result = TableTop.new width, height, @robot.send(op_name)
+      result.valid? ? result : self
+    else
+      self
+    end
   end
 
 end

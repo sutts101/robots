@@ -169,5 +169,29 @@ describe TableTop do
     end
   end
 
+  describe '#apply' do
+    let(:good_location) {Point.new 1,1}
+    let(:bad_location)  {Point.new -1,-1}
+    let(:robot_1)       {double 'Robot'}
+    let(:robot_2)       {double 'Robot'}
+    before do
+      expect(robot_1).to receive(:some_op).and_return robot_2
+    end
+    context 'when the resulting tabletop would be VALID' do
+      it 'should return the resulting tabletop' do
+        expect(robot_2).to receive(:location).and_return good_location
+        subject = TableTop.new(5, 5, robot_1).apply :some_op
+        expect(subject.robot).to eq robot_2
+      end
+    end
+    context 'when the resulting tabletop would NOT be valid' do
+      it 'should return itself' do
+        expect(robot_2).to receive(:location).and_return bad_location
+        subject = TableTop.new(5, 5, robot_1).apply :some_op
+        expect(subject.robot).to eq robot_1
+      end
+    end
+  end
+
 end
 
